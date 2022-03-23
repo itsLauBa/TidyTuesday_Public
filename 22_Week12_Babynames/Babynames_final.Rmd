@@ -38,7 +38,7 @@ babynames %>% filter(name=='Laura') %>%
 ggplot(aes(year, n)) +
   geom_col(aes(fill=sex), color='grey81', alpha=0.7, width=2) +
   facet_wrap(~sex, scales = 'free_y', nrow = 2, labeller = labeller(sex = labs_sex)) +
-  labs(x='Year', y='Babies', caption=caption_text, title=title_text, subtitle=subtitle_text, parse=TRUE) +
+  labs(x='Year', y='Babies', caption=caption_text, title=title_text, subtitle=subtitle_text) +
   scale_fill_manual(values=c('deepskyblue1', 'dodgerblue4')) +
   theme_minimal() +
   theme(text = element_text(size = 16, color='grey40'),
