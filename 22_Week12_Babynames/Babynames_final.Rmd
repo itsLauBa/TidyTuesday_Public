@@ -8,6 +8,7 @@ output: html_document
 ```{r}
 library(tidymodels)
 library(showtext)
+library(ggtext)
 ```
 
 ```{r}
@@ -26,22 +27,28 @@ showtext_auto()
 ```
 
 ```{r}
-labs_sex = c('Female', 'Male')
+labs_sex = c('\U2640', '\U2642')
 names(labs_sex) = c('F', 'M')
+
 caption_text = 'TidyTuesday 2022 - Week 12 | Data: babynames\nGraphic: @itsLauBa7'
+title_text = 'Frequency of name <i>Laura</i>'
+subtitle_text = 'Number of babies named Laura by year and gender'
 
 babynames %>% filter(name=='Laura') %>% 
 ggplot(aes(year, n)) +
   geom_col(aes(fill=sex), color='grey81', alpha=0.7, width=2) +
   facet_wrap(~sex, scales = 'free_y', nrow = 2, labeller = labeller(sex = labs_sex)) +
-  labs(x='Year', y='Babies named Laura', caption=caption_text) +
-  scale_fill_manual(values=c('violetred2', 'dodgerblue4')) +
+  labs(x='Year', y='Babies', caption=caption_text, title=title_text, subtitle=subtitle_text, parse=TRUE) +
+  scale_fill_manual(values=c('deepskyblue1', 'dodgerblue4')) +
   theme_minimal() +
-  theme(text = element_text(family = 'firasans', size = 16, color='grey40'),
+  theme(text = element_text(size = 16, color='grey40'),
         legend.position="none",
         strip.background=element_rect(colour="grey81",
                                     fill="grey81"),
         axis.text = element_text(color='grey40'),
+        axis.title = element_text(size=13),
         strip.text = element_text(color='grey40'),
-        plot.caption = element_text(size=8, color='grey40')) 
+        plot.caption = element_text(size=8, color='grey40'),
+        plot.title = element_markdown(),
+        plot.subtitle = element_text(size=13, margin=margin(0,0,10,0))) 
 ```
