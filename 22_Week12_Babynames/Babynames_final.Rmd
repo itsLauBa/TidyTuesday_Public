@@ -32,7 +32,7 @@ names(labs_sex) = c('F', 'M')
 
 caption_text = 'TidyTuesday 2022 - Week 12 | Data: babynames\nGraphic: @itsLauBa7'
 title_text = 'Frequency of name <i>Laura</i>'
-subtitle_text = 'Number of babies named Laura by year and gender'
+subtitle_text = 'Number of babies named Laura by year and sex'
 
 babynames %>% filter(name=='Laura') %>% 
 ggplot(aes(year, n)) +
