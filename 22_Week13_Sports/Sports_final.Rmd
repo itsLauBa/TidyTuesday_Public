@@ -1,0 +1,73 @@
+---
+title: "sports"
+author: "Laura"
+date: "29 3 2022"
+output: html_document
+---
+
+```{r}
+library(tidymodels)
+library(showtext)
+```
+
+```{r}
+font_add_google('Fira Sans', 'firasans')
+showtext_auto()
+```
+
+```{r}
+tuesdata = tidytuesdayR::tt_load('2022-03-29')
+sports = tuesdata$sports
+```
+
+```{r}
+data_revenue = sports %>% 
+  mutate(year=as.factor(year),
+         sportscode = as.factor(sportscode),
+         sports = as.factor(sports)) %>% 
+  filter(year==2017) %>% 
+  select(sports, rev_men, rev_women, total_rev_menwomen) %>% 
+  drop_na() %>% 
+  group_by(sports) %>% 
+  summarise(revenue = sum(total_rev_menwomen),
+            revenue_w = sum(rev_women),
+            revenue_m = sum(rev_men)) %>% 
+  arrange(-revenue) %>% 
+  filter(revenue>=5e7)
+```
+
+```{r}
+comma_abs = function(x){
+  comma(abs(x)/1e9, accuracy=1)
+}
+```
+
+```{r}
+caption_text = 'TidyTuesday 2022 - Week 13 | Data: sports\nGraphic: @itsLauBa7'
+title_text = 'Revenue of collegiate sports by gender in 2017'
+subtitle_text = 'for sports with >50.000.000 total revenue'
+
+ggplot(data_revenue, aes(x=reorder(sports, revenue))) +
+  geom_col(aes(y = -revenue_w, fill='\U2640'), alpha=0.8, color='grey65') +
+  geom_col(aes(y = revenue_m, fill='\U2642'), alpha=0.8, color='grey65') +
+  coord_flip() +
+  geom_hline(yintercept=0, color='grey27', size=1) +
+  labs(x='Sports', y='Revenue (in billion USD)', caption = caption_text, title=title_text,
+       subtitle = subtitle_text) +
+  scale_y_continuous(labels = comma_abs) +
+  scale_fill_manual(values=c('deepskyblue1', 'dodgerblue4')) +
+  theme_dark() +
+  theme(legend.title = element_blank(),
+        axis.text.x = element_text(vjust=0.4, color='grey', family = 'firasans', size=13),
+        axis.text.y = element_text(color='grey', family = 'firasans', size=13),
+        axis.title = element_text(color='grey', size=15),
+        plot.title = element_text(color='grey', size=20),
+        plot.subtitle = element_text(color='grey', size=15, margin = margin(0,0,13,0)),
+        plot.caption = element_text(size=8, color='grey', family = 'firasans', margin=margin(20,0,0,0)),
+        plot.background = element_rect(fill='black'),
+        legend.background = element_rect(fill='black'),
+        legend.text = element_text(color = 'grey', size=15),
+        panel.background = element_rect(fill='grey'),
+        panel.grid = element_line(color = 'grey65')) 
+```
+
