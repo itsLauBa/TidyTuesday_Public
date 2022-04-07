@@ -33,14 +33,14 @@ data_plot = data %>%
 ```
 
 ```{r}
-title_text = 'Number of \nnews organisations'
+title_text = 'News organisations'
 subtitle_text = 'in Canada and US with \ncorresponding language'
 caption_text = 'TidyTuesday 2022 - Week 14 | Data: news organzations\nGraphic: @itsLauBa7'
 
 ggplot(data_plot, aes(x = year_founded)) +
   geom_area(aes(y = English, fill='English')) + 
   geom_ribbon(aes(ymin=English, ymax = sum, fill='Spanish')) + 
-  labs(x = 'Year founded', y='Number of news organizations', caption=caption_text, title = title_text, subtitle = subtitle_text) +
+  labs(x = 'Year founded', y='Number of organizations', caption=caption_text, title = title_text, subtitle = subtitle_text) +
   scale_fill_manual(name='Language', values=c('gray60', 'gray100'), labels=c('English', 'Spanish/\nBilingual')) +
   theme(text = element_text(family = 'ubuntu'),
     panel.background = element_rect(fill='grey25', color='gray81'),
