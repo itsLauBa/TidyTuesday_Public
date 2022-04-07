@@ -1,0 +1,64 @@
+---
+title: "Publications"
+author: "Laura"
+date: "6 4 2022"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(showtext)
+```
+
+```{r}
+font_add_google('Ubuntu', 'ubuntu')
+showtext_auto()
+```
+
+```{r}
+tuesdata = tidytuesdayR::tt_load(2022, week = 14)
+data = tuesdata$news_orgs
+```
+
+```{r}
+data %>% skimr::skim()
+```
+
+```{r}
+data_plot = data %>% 
+  mutate(across(where(is.character), as.factor),
+         primary_language = if_else(primary_language == 'English', primary_language, factor('Spanish'))) %>%
+  filter(!is.na(primary_language)) %>% 
+  group_by(year_founded, primary_language) %>% summarise(n = n()) %>% 
+  pivot_wider(names_from = primary_language, values_from = n) %>% 
+  drop_na(., year_founded) %>% 
+  replace(is.na(.), 0) %>% 
+  mutate(sum = English + Spanish)
+```
+
+```{r}
+title_text = 'Foundations of \nnews organisations'
+subtitle_text = 'with corresponding language'
+caption_text = 'TidyTuesday 2022 - Week 14 | Data: news organzations\nGraphic: @itsLauBa7'
+
+ggplot(data_plot, aes(x = year_founded)) +
+  geom_area(aes(y = English, fill='English')) + 
+  geom_ribbon(aes(ymin=English, ymax = sum, fill='Spanish')) + 
+  labs(x = 'Year founded', y='Number of news organizations', caption=caption_text, title = title_text, subtitle = subtitle_text) +
+  scale_fill_manual(name='Language', values=c('gray60', 'gray100'), labels=c('English', 'Spanish/\nBilingual')) +
+  theme(text = element_text(family = 'ubuntu'),
+    panel.background = element_rect(fill='grey25', color='gray81'),
+        panel.grid = element_line(color='grey25'),
+        plot.background = element_rect(fill='grey25'),
+        legend.background = element_rect(fill='grey25'),
+        legend.text = element_text(color='gray81', size=11),
+        legend.title = element_text(color='gray81', size=15),
+        axis.title = element_text(color='gray81', size=15),
+        axis.text = element_text(color='gray81', size=11),
+        plot.caption = element_text(color='gray81'),
+        plot.caption.position = 'plot',
+        plot.title = element_text(color='gray100', size=20, hjust=0.1, vjust = -17, face='bold'),
+        plot.subtitle = element_text(color='gray100', hjust=0.1, vjust = -23, size=15, face='italic')
+  )
+```
+
