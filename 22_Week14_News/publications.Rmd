@@ -33,9 +33,9 @@ data_plot = data %>%
 ```
 
 ```{r}
-title_text = 'News organisations'
+title_text = 'News organizations'
 subtitle_text = 'in Canada and US with \ncorresponding language'
-caption_text = 'TidyTuesday 2022 - Week 14 | Data: news organzations\nGraphic: @itsLauBa7'
+caption_text = 'TidyTuesday 2022 - Week 14 | Data: news organizations\nGraphic: @itsLauBa7'
 
 ggplot(data_plot, aes(x = year_founded)) +
   geom_area(aes(y = English, fill='English')) + 
