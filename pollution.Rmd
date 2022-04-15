@@ -1,0 +1,89 @@
+---
+title: "Pollution"
+author: "Laura"
+date: "15 4 2022"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(showtext)
+library(gganimate)
+```
+
+```{r}
+font_add_google('Ubuntu', 'ubuntu')
+showtext_auto()
+```
+
+```{r}
+tuesdata = tidytuesdayR::tt_load(2022, week = 15)
+data_death = tuesdata$indoor_pollution
+data_fuel = tuesdata$fuel_access
+```
+
+```{r}
+min_year = max(min(data_death$Year), min(data_fuel$Year))
+max_year = min(max(data_death$Year), max(data_fuel$Year))
+
+levels_income = c('Low income', 'Lower middle income', 'Upper middle income', 'High income', 'World')
+levels_entity = c('World Bank Low Income', 'World Bank Lower Middle Income', 'World Bank Upper Middle Income', 'World Bank High Income', 'World')
+
+data_fuel = data_fuel %>% 
+  rename(fuel_access_rate = names(.)[4]) %>% 
+  filter((Year %in% min_year:max_year) & (Entity %in% levels_income)) %>%
+  mutate(Code = case_when(Entity == levels_income[1] ~ 'L',
+                          Entity == levels_income[2] ~ 'LM',
+                          Entity == levels_income[3] ~ 'UM',
+                          Entity == levels_income[4] ~ 'H',
+                          Entity == 'World' ~ 'W',
+                          TRUE ~ 'Other'),
+         fuel_access_rate = fuel_access_rate/100)
+
+data_death = data_death %>% 
+  rename(Deathrate = names(.)[4]) %>% 
+  filter((Year %in% min_year:max_year) & (Entity %in% levels_entity)) %>%
+  mutate(Code = case_when(Entity == levels_entity[1] ~ 'L',
+                          Entity == levels_entity[2] ~ 'LM',
+                          Entity == levels_entity[3] ~ 'UM',
+                          Entity == levels_entity[4] ~ 'H',
+                          Entity == 'World' ~ 'W',
+                          TRUE ~ 'Other'),
+         Deathrate = Deathrate / 100)
+  
+  
+data_plot = data_death %>% 
+  left_join(data_fuel, by=c('Code', 'Year')) %>%
+  mutate(Code = factor(Code, levels=c('L', 'LM', 'UM', 'H', 'W')))
+```
+
+```{r}
+blues = c(RColorBrewer::brewer.pal(n = 9, "Blues")[seq(1,8,2)], 'deepskyblue4')
+
+title_text = 'Development of access to clean fuels and \ntechnologies for cooking and death with \nrisk of household air pollution from solid fuels'
+caption_text = 'TidyTuesday 2022 - Week 15 | Data: Indoor Air pollution\nGraphic: @itsLauBa7'
+
+p = ggplot(data_plot, aes(fuel_access_rate, Deathrate, color=Code)) +
+  geom_point(alpha=0.7, size=4) +
+  scale_color_manual(name='World Bank Classification', labels=levels_income, values = blues) +
+  scale_x_continuous(labels=scales::percent, name='Access to clean fuels and \ntechnologies for cooking (% of population)') +
+  scale_y_continuous(labels=scales::percent, name='Death rate') +
+  labs(title = title_text, caption = caption_text) +
+  guides(size='none') +
+  theme_minimal() +
+  theme(text = element_text(family = 'ubuntu', color='grey95'),
+        plot.background = element_rect(fill='grey35'),
+        panel.background = element_rect(fill='grey35', color='grey95'),
+        panel.grid = element_line(color='grey95'),
+        axis.text = element_text(color='grey95'),
+        plot.caption.position = 'plot',
+        plot.title = element_text(size=20, face='bold'),
+        plot.subtitle = element_text(size=15, margin = margin(0,0,20,0))) +
+  labs(subtitle = 'Year: {frame_time}') +
+  transition_time(as.integer(Year)) +
+  ease_aes('linear')
+
+animate(p, width=900)
+
+anim_save('fuel_death.gif')
+```
