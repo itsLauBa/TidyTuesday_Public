@@ -65,7 +65,7 @@ caption_text = 'TidyTuesday 2022 - Week 15 | Data: Indoor Air pollution\nGraphic
 
 p = ggplot(data_plot, aes(fuel_access_rate, Deathrate, color=Code)) +
   geom_point(alpha=0.7, size=4) +
-  scale_color_manual(name='World Bank Classification', labels=levels_income, values = blues) +
+  scale_color_manual(name='World Bank \nClassification', labels=levels_income, values = blues) +
   scale_x_continuous(labels=scales::percent, name='Access to clean fuels and \ntechnologies for cooking (% of population)') +
   scale_y_continuous(labels=scales::percent, name='Death rate') +
   labs(title = title_text, caption = caption_text) +
@@ -78,12 +78,13 @@ p = ggplot(data_plot, aes(fuel_access_rate, Deathrate, color=Code)) +
         axis.text = element_text(color='grey95'),
         plot.caption.position = 'plot',
         plot.title = element_text(size=20, face='bold'),
-        plot.subtitle = element_text(size=15, margin = margin(0,0,20,0))) +
+        plot.subtitle = element_text(size=15, margin = margin(0,0,20,0)),
+        legend.position = 'right') +
   labs(subtitle = 'Year: {frame_time}') +
   transition_time(as.integer(Year)) +
   ease_aes('linear')
 
-animate(p, width=900)
+animate(p, width=800)
 
 anim_save('fuel_death.gif')
 ```
