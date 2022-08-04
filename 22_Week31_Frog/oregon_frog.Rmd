@@ -1,0 +1,54 @@
+---
+title: "Tidy Tuesday"
+output: html_document
+date: '2022-08-04'
+---
+
+```{r}
+library(tidyverse)
+library(showtext)
+library(ggimage)
+library(jpeg)
+```
+
+```{r}
+font_add_google('Ubuntu', 'ubuntu')
+showtext_auto()
+```
+
+```{r}
+tuesdata = tidytuesdayR::tt_load(2022, week = 31)
+frogs = tuesdata$frogs
+```
+
+
+```{r}
+img_url = 'https://www.goodfreephotos.com/albums/animals/reptiles-and-amphibians/green-frog.jpg'
+title_text = 'Number of observed frogs by water depth and gender'
+subtitle_text = 'at Crane Prairie Reservoir in Oregon between September and late November of 2018' 
+caption_text = 'TidyTuesday 2022 - Week 31 | Data: Oregon Spotted Frog\nGraphic: @itsLauBa7'
+
+p = frogs %>% 
+  mutate(Female = as.factor(Female),
+         Water = factor(Water, levels=c('No water', 'Shallow water', 'Deep water', 'Unknown water'))) %>% 
+  ggplot() +
+  geom_bar(aes(x = Water, fill = Female), position = 'dodge') +
+  labs(y='Observed Frogs', title=title_text, subtitle=subtitle_text, caption=caption_text) +
+  scale_fill_manual(labels=c('Male', 'Female'), values = c('wheat1', 'khaki4')) +
+  theme_minimal() +
+  theme(text = element_text(color='gray90', family='ubuntu'),
+        legend.title = element_blank(),
+        legend.text = element_text(color='gray90', family='ubuntu', size=15),
+        axis.title.x = element_blank(),
+        axis.title.y = element_text(size=15),
+        plot.title = element_text(size=20, face='bold'),
+        plot.subtitle = element_text(size= 15),
+        axis.text = element_text(color='gray90', family='ubuntu', size=12),
+        plot.caption.position = 'plot',
+        plot.caption = element_text(size=9),
+        panel.grid = element_line(color='gray90')) 
+
+ggbackground(p, img_url, alpha=0.5)
+```
+
+
