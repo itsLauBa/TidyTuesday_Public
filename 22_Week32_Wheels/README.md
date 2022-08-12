@@ -1,0 +1,1 @@
+Unicode for other emojis can be found at \url{https://twemoji-cheatsheet.vercel.app/}
