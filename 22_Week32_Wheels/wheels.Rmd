@@ -39,7 +39,7 @@ plot_data = wheels %>%
 ```
 
 ```{r}
-title_text = 'Evolution of ferris wheel hights'
+title_text = 'Development of ferris wheel heights'
 subtitle_text = 'between 1880 and 2020 in China, Japan and the US'
 caption_text = 'TidyTuesday 2022 - Week 32 | Data: Ferris Wheels\nGraphic: @itsLauBa7'
 
